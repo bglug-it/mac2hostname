@@ -3,7 +3,7 @@
 """API to map MAC addresses to hostnames"""
 
 from contextlib import contextmanager, closing
-from subprocess import check_output
+from subprocess import Popen, PIPE
 from sqlite3 import connect
 from bottle import route, run, request
 from json import dumps
@@ -36,8 +36,8 @@ def gethostname(mac, base=None):
     return hostname
 
 def getmac(ip):
-    check_output(['ping', '-c1', '-t2', ip])
-    arp = check_output(['arp', '-n', ip])
+    Popen(['ping', '-c1', '-t2', ip], stdout=PIPE).communicate()
+    arp = Popen(['arp', '-n', ip], stdout=PIPE).communicate()[0]
     return re.search(r'(([\da-fA-F]{1,2}\:){5}[\da-fA-F]{1,2})', arp).group(1)
 
 @route('/hosts')
