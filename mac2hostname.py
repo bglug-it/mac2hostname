@@ -8,12 +8,25 @@ from sqlite3 import connect
 from bottle import route, run, request
 from json import dumps
 import re
+import os
+import configparser
 
 __author__ = "Enrico Bacis"
 __email__ = "enrico.bacis@gmail.com"
 
+# Added by Emiliano Vavassori <syntaxerrormmm-AT-gmail.com>
+# Configuring script for usage as service - using ini file
+config = ConfigParser.ConfigParser()
+config.read('/etc/mac2hostname.ini')
+
+# Will create a PID file to be used with init.d script
+pid = os.getpid()
+op = open(config.get('General', 'PIDFile'), 'w')
+op.write("%s" % pid)
+op.close()
+
 @contextmanager
-def getcursor(db='mac2hostname.db'):
+def getcursor(db = config.get('General', 'Database')):
     with connect(db) as connection:
         with closing(connection.cursor()) as cursor:
             yield cursor
@@ -61,5 +74,8 @@ def whatsmyhostname():
 
 if __name__ == '__main__':
     init_tables()
-    run()
+    run(
+        host = config.get('General', 'BindAddress'),
+        port = int(config.get('General', 'Port'))
+    )
 
