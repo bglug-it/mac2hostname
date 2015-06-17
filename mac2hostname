@@ -1,18 +1,22 @@
 #!/bin/sh
 
+# chkconfig: 2345 20 80
+# description: Manage assignation of hostnames for clients
+# pidfile: /var/run/mac2hostname/mac2hostname.pid
+# config: /etc/mac2hostname.ini
+
 ### BEGIN INIT INFO
 # Provides:          mac2hostname
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Put a short description of the service here
-# Description:       Put a long description of the service here
+# Short-Description: Manage assignation of hostnames for clients
+# Description:       Manage assignation of hostnames for clients
 ### END INIT INFO
 
 # Change the next 3 lines to suit where you install your script and what you want to call it
-DIR=/usr/share/mac2hostname
-DAEMON=$DIR/mac2hostname.py
+DAEMON=/usr/share/mac2hostname/mac2hostname.py
 DAEMON_NAME=mac2hostname
 
 # Add any command line options for your daemon here
@@ -21,21 +25,34 @@ DAEMON_OPTS=""
 # This next line determines what user the script runs as.
 # Root generally not recommended but necessary if you are using the Raspberry Pi GPIO from Python.
 DAEMON_USER=mac2hostname
+DAEMON_GROUP=mac2hostname
 
 # The process ID of the script when it runs is stored here:
+LOGFILE=/var/log/mac2hostname/$DAEMON_NAME.log
 PIDFILE=/var/run/mac2hostname/$DAEMON_NAME.pid
+lockfile=/var/lock/subsys/$DAEMON_NAME
 
-. /lib/lsb/init-functions
+. /etc/rc.d/init.d/functions
+. /etc/sysconfig/network
+
+[ "$NETWORKING" = "no" ] && exit 0
 
 do_start () {
-    log_daemon_msg "Starting system $DAEMON_NAME daemon"
-    start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $DAEMON_USER --chuid $DAEMON_USER --startas $DAEMON -- $DAEMON_OPTS
-    log_end_msg $?
+  echo -n $"Starting $DAEMON_NAME: "
+  daemon --user=$DAEMON_USER --pidfile=$PIDFILE "python $DAEMON >>$LOGFILE 2>/dev/null &"
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch $lockfile
+  return $RETVAL
 }
+
 do_stop () {
-    log_daemon_msg "Stopping system $DAEMON_NAME daemon"
-    start-stop-daemon --stop --pidfile $PIDFILE --retry 10
-    log_end_msg $?
+  echo -n $"Stopping $DAEMON_NAME: "
+  killproc -p $PIDFILE python
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && rm -f $lockfile
+  return $RETVAL
 }
 
 case "$1" in
@@ -50,7 +67,7 @@ case "$1" in
         ;;
 
     status)
-        status_of_proc "$DAEMON_NAME" "$DAEMON" && exit 0 || exit $?
+        status -p $PIDFILE python
         ;;
 
     *)

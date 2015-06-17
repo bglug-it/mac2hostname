@@ -9,7 +9,7 @@ from bottle import route, run, request
 from json import dumps
 import re
 import os
-import configparser
+import ConfigParser
 
 __author__ = "Enrico Bacis"
 __email__ = "enrico.bacis@gmail.com"
