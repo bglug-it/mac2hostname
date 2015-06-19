@@ -1,6 +1,6 @@
 Summary: Assigns hostnames based on progressive enumeration
 Name: mac2hostname
-Version: 1.0.0
+Version: 1.1.0
 Release: 1%{?dist}
 URL: https://github.com/bglug-it/mac2hostname/
 License: GPLv2+
@@ -11,7 +11,7 @@ Requires(pre): shadow-utils
 Requires(post): chkconfig
 Requires(preun): chkconfig initscripts
 Requires(postun): shadow-utils initscripts
-Source0: mac2hostname-1.0.0.tar.gz
+Source0: mac2hostname-1.1.0.tar.gz
 BuildArch: noarch
 
 %description
@@ -79,5 +79,8 @@ rm -rf %{buildroot}
 %dir %attr(755,mac2hostname,mac2hostname) %{_localstatedir}/run/%{name}
 
 %changelog
-* Tue Jun 16 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmai.com> - 1.0.0-1
+* Tue Jun 16 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 1.0.0-1
 - Release iniziale
+
+* Fri Jun 19 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 1.1.0-1
+- Added functionality
