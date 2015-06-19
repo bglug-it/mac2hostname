@@ -7,9 +7,9 @@ from subprocess import Popen, PIPE
 from sqlite3 import connect
 from bottle import route, run, request
 from json import dumps
+import ConfigParser
 import re
 import os
-import ConfigParser
 
 __author__ = "Enrico Bacis"
 __email__ = "enrico.bacis@gmail.com"
@@ -76,8 +76,6 @@ def whatsmyhostname():
 
 if __name__ == '__main__':
     init_tables()
-    run(
-        host = config.get('General', 'BindAddress'),
-        port = int(config.get('General', 'Port'))
-    )
+    run(host = config.get('General', 'BindAddress'),
+        port = int(config.get('General', 'Port')))
 
