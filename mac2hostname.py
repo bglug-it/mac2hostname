@@ -40,11 +40,13 @@ def init_tables():
 def normalizemac(mac):
     return ':'.join(x.zfill(2) for x in mac.split(':')).upper()
 
-def gethostname(mac, base=None, role=None):
-    mac, base, role = normalizemac(mac), base or 'lab', role or 'default'
+def gethostname(mac, base=config.get('General', 'DefaultBase'),
+                role=config.get('General', 'DefaultRole'),
+                digits=int(config.get('General', 'NameDigits'))):
+    mac, base, role, digits = normalizemac(mac), base or 'lab', role or 'default', digits or 2
     with getcursor() as cursor:
         (newid,) = cursor.execute('SELECT COALESCE(MAX(id)+1, 1) FROM client').fetchone()
-        data = (newid, '%s-%s' % (base, newid), mac, role)
+        data = (newid, ('%s-%0' + str(digits) + 'd') % (base, int(newid)), mac, role)
         cursor.execute('INSERT OR IGNORE INTO client VALUES (?,?,?,?)', data)
         (hostname,) = cursor.execute('SELECT hostname FROM client WHERE mac = "%s"' % mac)
     return hostname
