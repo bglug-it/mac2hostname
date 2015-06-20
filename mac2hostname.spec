@@ -1,6 +1,6 @@
 Summary: Assigns hostnames based on progressive enumeration
 Name: mac2hostname
-Version: 1.1.0
+Version: 2.0.0
 Release: 1%{?dist}
 URL: https://github.com/bglug-it/mac2hostname/
 License: GPLv2+
@@ -11,7 +11,7 @@ Requires(pre): shadow-utils
 Requires(post): chkconfig
 Requires(preun): chkconfig initscripts
 Requires(postun): shadow-utils initscripts
-Source0: mac2hostname-1.1.0.tar.gz
+Source0: mac2hostname-2.0.0.tar.gz
 BuildArch: noarch
 
 %description
@@ -79,8 +79,12 @@ rm -rf %{buildroot}
 %dir %attr(755,mac2hostname,mac2hostname) %{_localstatedir}/run/%{name}
 
 %changelog
-* Tue Jun 16 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 1.0.0-1
-- Release iniziale
+* Sat Jun 20 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 2.0.0-1
+- Version 2.0.0 implements a new route for a dynamic inventory for ansible.
+- Completely rewritten the daemon and configuration, not anymore compatible withprevious versions.
 
 * Fri Jun 19 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 1.1.0-1
 - Added functionality
+
+* Tue Jun 16 2015 Emiliano Vavassori <syntaxerrormmm-AT-gmail.com> - 1.0.0-1
+- Release iniziale

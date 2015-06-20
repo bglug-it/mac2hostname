@@ -1,7 +1,7 @@
 #!/bin/bash
 
 name=mac2hostname
-version=1.1.0
+version=2.0.0
 tmpdir=/tmp/src_build/${name}-${version}
 
 cwd=$(pwd)
